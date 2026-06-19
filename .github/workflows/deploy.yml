@@ -1,20 +1,75 @@
-name: Deploy to GitHub Pages
+name: 📦 Build MangaZen APK
 
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:   # También se puede lanzar manualmente desde GitHub
 
 jobs:
-  deploy:
+  build-apk:
+    name: Build Android APK
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+    steps:
+      # 1. Descargar el código
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      # 2. Instalar Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          exclude_assets: '.github'
+          node-version: '20'
+
+      # 3. Instalar Java (necesario para Gradle/Android)
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 4. Instalar Android SDK
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # 5. Instalar Capacitor y dependencias
+      - name: Instalar dependencias npm
+        run: npm install
+
+      # 6. Copiar archivos web a carpeta www
+      - name: Preparar carpeta www
+        run: |
+          mkdir -p www
+          cp index.html styles.css app.js manifest.json sw.js www/
+
+      # 7. Inicializar y agregar plataforma Android
+      - name: Agregar plataforma Android
+        run: |
+          npx cap add android
+          npx cap sync android
+
+      # 8. Compilar el APK debug
+      - name: Compilar APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+
+      # 9. Subir el APK como artefacto descargable
+      - name: 📤 Subir APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: MangaZen-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      # 10. Mostrar enlace de descarga
+      - name: ✅ APK listo
+        run: |
+          echo "==========================================="
+          echo "✅ APK construido exitosamente!"
+          echo "📱 Ve a Actions > Build MangaZen APK"
+          echo "   y descarga el artefacto 'MangaZen-APK'"
+          echo "==========================================="

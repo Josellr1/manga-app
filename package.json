@@ -1,0 +1,16 @@
+{
+  "name": "manga-app",
+  "version": "1.0.0",
+  "description": "MangaZen - Lector de manga personal en español",
+  "scripts": {
+    "prepare-www": "node -e \"const fs=require('fs');['index.html','styles.css','app.js','manifest.json','sw.js'].forEach(f=>{try{fs.mkdirSync('www',{recursive:true});fs.copyFileSync(f,'www/'+f)}catch(e){}})\"",
+    "build": "npm run prepare-www"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0"
+  }
+}

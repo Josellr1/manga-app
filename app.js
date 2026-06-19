@@ -10,9 +10,13 @@
 const API = 'https://api.mangadex.org';
 const COVER_CDN = 'https://uploads.mangadex.org/covers';
 
-// Detectar si estamos en un entorno externo (GitHub Pages, APK, etc.)
-// En localhost no se necesita proxy. En producción sí para evitar bloqueos CORS.
-const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+// Detectar si estamos en localhost O dentro de un APK (Capacitor)
+// En ambos casos no se necesita proxy CORS.
+const IS_LOCAL = 
+  location.hostname === 'localhost' ||
+  location.hostname === '127.0.0.1' ||
+  location.protocol === 'capacitor:' ||
+  location.protocol === 'file:';
 const CORS_PROXY = 'https://corsproxy.io/?';
 
 function apiUrl(endpoint) {
