@@ -217,5 +217,12 @@
   </div>
 
   <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/manga-app/sw.js').catch(() =>
+        navigator.serviceWorker.register('/sw.js')
+      );
+    }
+  </script>
 </body>
 </html>

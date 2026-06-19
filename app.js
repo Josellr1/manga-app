@@ -9,7 +9,17 @@
 // =====================================================
 const API = 'https://api.mangadex.org';
 const COVER_CDN = 'https://uploads.mangadex.org/covers';
-const PROXY = 'https://api.allorigins.win/raw?url='; // Proxy CORS para imágenes del reader
+
+// Detectar si estamos en un entorno externo (GitHub Pages, APK, etc.)
+// En localhost no se necesita proxy. En producción sí para evitar bloqueos CORS.
+const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const CORS_PROXY = 'https://corsproxy.io/?';
+
+function apiUrl(endpoint) {
+  const full = `${API}${endpoint}`;
+  return IS_LOCAL ? full : CORS_PROXY + encodeURIComponent(full);
+}
+
 const LANG_ES = ['es', 'es-la'];
 
 const GENRES = [
@@ -86,11 +96,28 @@ function toast(msg) {
 }
 
 async function fetchJSON(url) {
-  const res = await fetch(url, {
-    headers: { 'Accept': 'application/json' }
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  // Si la URL ya es completa (empieza con http), usarla directamente con proxy si aplica
+  const finalUrl = url.startsWith('http')
+    ? (IS_LOCAL ? url : CORS_PROXY + encodeURIComponent(url))
+    : url;
+
+  try {
+    const res = await fetch(finalUrl, {
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  } catch (err) {
+    // Reintento con proxy alternativo si el primero falla
+    if (!IS_LOCAL && !finalUrl.includes('allorigins')) {
+      const fallbackUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+      const res2 = await fetch(fallbackUrl);
+      if (!res2.ok) throw err;
+      const data = await res2.json();
+      return JSON.parse(data.contents);
+    }
+    throw err;
+  }
 }
 
 // =====================================================
