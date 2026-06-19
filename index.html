@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d0d14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="Tu lector de manga personal en español — rápido, moderno y sin anuncios." />
+  <title>MangaZen — Lector Personal</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Splash / Loading screen -->
+  <div id="splash-screen">
+    <div class="splash-logo">
+      <div class="splash-icon">⛩️</div>
+      <h1 class="splash-title">MangaZen</h1>
+      <p class="splash-sub">Tu santuario del manga</p>
+      <div class="splash-loader"><div></div><div></div><div></div></div>
+    </div>
+  </div>
+
+  <!-- App Shell -->
+  <div id="app" class="hidden">
+
+    <!-- ===== PÁGINAS ===== -->
+
+    <!-- HOME -->
+    <div id="page-home" class="page active">
+      <header class="top-bar glass">
+        <div class="top-bar-left">
+          <span class="app-logo">⛩️ MangaZen</span>
+        </div>
+        <div class="top-bar-right">
+          <button id="btn-search-toggle" class="icon-btn" aria-label="Buscar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Search bar (colapsable) -->
+      <div id="search-bar" class="search-bar hidden">
+        <div class="search-input-wrap">
+          <svg class="search-icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="search-input" type="search" placeholder="Buscar manga en español..." autocomplete="off" />
+          <button id="btn-search-clear" class="icon-btn small" aria-label="Limpiar">✕</button>
+        </div>
+      </div>
+
+      <!-- Search results -->
+      <div id="search-results" class="section hidden">
+        <h2 class="section-title">Resultados</h2>
+        <div id="search-grid" class="manga-grid"></div>
+        <button id="btn-search-more" class="load-more-btn hidden">Cargar más</button>
+      </div>
+
+      <!-- Main content -->
+      <div id="home-content">
+        <!-- Featured / Hero -->
+        <div class="hero-section">
+          <div id="hero-card" class="hero-card shimmer">
+            <div class="hero-overlay">
+              <span class="hero-badge">⭐ Destacado</span>
+              <h2 id="hero-title" class="hero-title">Cargando...</h2>
+              <p id="hero-desc" class="hero-desc"></p>
+              <button id="btn-hero-read" class="btn-primary">Leer ahora →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Populares en Español -->
+        <section class="section">
+          <h2 class="section-title">🔥 Populares en Español</h2>
+          <div id="popular-grid" class="manga-grid"></div>
+        </section>
+
+        <!-- Recientes en Español -->
+        <section class="section">
+          <h2 class="section-title">🆕 Actualizaciones recientes</h2>
+          <div id="recent-grid" class="manga-grid"></div>
+        </section>
+
+        <!-- Géneros -->
+        <section class="section">
+          <h2 class="section-title">🎭 Explorar géneros</h2>
+          <div id="genre-chips" class="chip-row"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- MANGA DETAIL -->
+    <div id="page-detail" class="page">
+      <header class="top-bar glass detail-bar">
+        <button id="btn-back-detail" class="icon-btn back-btn" aria-label="Volver">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </button>
+        <div class="top-bar-title" id="detail-bar-title"></div>
+        <button id="btn-fav-toggle" class="icon-btn fav-btn" aria-label="Favorito">♡</button>
+      </header>
+
+      <div id="detail-content">
+        <!-- Hero cover -->
+        <div class="detail-hero">
+          <div id="detail-cover-blur" class="detail-cover-blur"></div>
+          <img id="detail-cover" class="detail-cover-img" src="" alt="" />
+          <div class="detail-hero-info">
+            <h1 id="detail-title" class="detail-title"></h1>
+            <div id="detail-meta" class="detail-meta"></div>
+            <div id="detail-tags" class="detail-tags"></div>
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="detail-section">
+          <h3 class="detail-section-title">Descripción</h3>
+          <p id="detail-desc" class="detail-desc collapsible"></p>
+          <button id="btn-expand-desc" class="btn-text-expand">Ver más ▾</button>
+        </div>
+
+        <!-- Capítulos -->
+        <div class="detail-section">
+          <h3 class="detail-section-title">Capítulos <span id="chapter-count" class="chapter-count-badge"></span></h3>
+          <div id="chapters-list" class="chapters-list"></div>
+          <button id="btn-more-chapters" class="load-more-btn hidden">Cargar más capítulos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- READER -->
+    <div id="page-reader" class="page reader-page">
+      <div id="reader-ui-overlay" class="reader-ui-overlay">
+        <header class="reader-top-bar glass">
+          <button id="btn-back-reader" class="icon-btn back-btn" aria-label="Volver">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+          </button>
+          <div class="reader-title">
+            <span id="reader-manga-title" class="reader-title-text"></span>
+            <span id="reader-chapter-label" class="reader-chap-text"></span>
+          </div>
+          <div class="reader-actions">
+            <button id="btn-reader-settings" class="icon-btn" aria-label="Ajustes">⚙️</button>
+          </div>
+        </header>
+
+        <div id="reader-progress-bar" class="reader-progress-bar">
+          <div id="reader-progress-fill" class="reader-progress-fill"></div>
+        </div>
+
+        <footer class="reader-bottom-bar glass">
+          <button id="btn-prev-chapter" class="btn-chapter-nav">← Cap. anterior</button>
+          <span id="reader-page-indicator" class="page-indicator">1 / ?</span>
+          <button id="btn-next-chapter" class="btn-chapter-nav">Cap. siguiente →</button>
+        </footer>
+      </div>
+
+      <!-- Settings panel -->
+      <div id="reader-settings-panel" class="settings-panel hidden glass">
+        <h3 class="settings-title">Ajustes de lectura</h3>
+        <label class="settings-row">
+          <span>Modo</span>
+          <select id="reader-mode-select">
+            <option value="vertical">Vertical (scroll)</option>
+            <option value="paged">Paginado</option>
+          </select>
+        </label>
+        <label class="settings-row">
+          <span>Fondo</span>
+          <div class="color-picks">
+            <button class="color-pick active" data-color="#000" style="background:#000" aria-label="Negro"></button>
+            <button class="color-pick" data-color="#111827" style="background:#111827" aria-label="Oscuro"></button>
+            <button class="color-pick" data-color="#fff" style="background:#fff" aria-label="Blanco"></button>
+            <button class="color-pick" data-color="#fdf6e3" style="background:#fdf6e3" aria-label="Sepia"></button>
+          </div>
+        </label>
+      </div>
+
+      <!-- Pages container -->
+      <div id="pages-container" class="pages-container vertical-mode"></div>
+
+      <!-- Paged nav zones -->
+      <div id="tap-left" class="tap-zone left hidden"></div>
+      <div id="tap-right" class="tap-zone right hidden"></div>
+    </div>
+
+    <!-- LIBRARY (Favoritos) -->
+    <div id="page-library" class="page">
+      <header class="top-bar glass">
+        <span class="app-logo">📚 Mi Biblioteca</span>
+      </header>
+      <div id="library-content" class="section">
+        <div id="library-empty" class="empty-state">
+          <div class="empty-icon">📖</div>
+          <h3>Tu biblioteca está vacía</h3>
+          <p>Guarda tus mangas favoritos aquí tocando el ♡ en cada manga.</p>
+        </div>
+        <div id="library-grid" class="manga-grid"></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav id="bottom-nav" class="bottom-nav glass">
+      <button class="nav-item active" data-page="home" id="nav-home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Inicio</span>
+      </button>
+      <button class="nav-item" data-page="library" id="nav-library">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span>Biblioteca</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
